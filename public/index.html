@@ -1,0 +1,56 @@
+<html>
+<head>
+<title>City Searcher</title>
+<script
+  src="http://code.jquery.com/jquery-3.2.1.min.js"
+  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+  crossorigin="anonymous">
+</script>
+<script>
+function getDetails(id) {
+var url = "/getDetails?id=" +  id;
+$.getJSON(url, function(data) {
+var details = data;
+$("#details").html(details);
+});
+}
+</script>
+<script>
+$(document).ready(function() {
+$(".getDetails").keyup(function(e) {
+e.preventDefault();
+});
+$( "#cityField" ).keyup(function() {
+var url = "/getPlace?q=" + $("#cityField").val();
+$.getJSON(url,function(data) {
+    var everything;
+    everything = "<ul>";
+    data = data.predictions
+    $.each(data, function(i,item) {
+      everything += "<li> "+data[i].description+"</li>";
+    });
+    everything += "</ul>";
+    $("#txtHint").html(everything);
+  })
+  .done(function() { console.log('getJSON request succeeded!'); })
+  .fail(function(jqXHR, textStatus, errorThrown) { 
+    console.log('getJSON request failed! ' + textStatus); 
+    console.log("incoming "+jqXHR.responseText);
+  })
+  .always(function() { console.log('getJSON request ended!');
+  });
+});
+});
+</script>
+</head>
+<body>
+<h1>The Great <span style="color: darkgreen">Location</span> Finder!</h1>
+<form>
+Enter a location: <input type="text" id="cityField" value=""><br>
+Suggested Sites: <span id="txtHint">Empty</span>
+<input id="weatherButton" type="submit" value="Submit">
+</form>
+<div id="details">
+</div>
+</body>
+</html>
